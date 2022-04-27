@@ -126,9 +126,12 @@ class GlApp {
         // create a texture, and upload a temporary 1px white RGBA array [255,255,255,255]
         let texture = this.gl.createTexture();
 
-        //
-        // TODO: set texture parameters and upload a temporary 1px white RGBA array [255,255,255,255]
-        // 
+        // TODO (DONE): set texture parameters and upload a temporary 1px white RGBA array [255,255,255,255]
+        let white = [255,255,255,255];
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture); //bind
+		this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR); //do the tex parameters
+		this.gl.texImage2D(this.gl.TEXTURE_2D, 0,this.gl.RGBA, 1, 1, 0,this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(white));
+		this.gl.bindTexture(this.gl.TEXTURE_2D, null); //unbind
 
         // download the actual image
         let image = new Image();
@@ -143,9 +146,12 @@ class GlApp {
     }
 
     updateTexture(texture, image_element) {
-        //
-        // TODO: update image for specified texture
-        //
+        // TODO (DONE): update image for specified texture.
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+		this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA,this.gl.UNSIGNED_BYTE, image_element);
+		this.gl.generateMipmap(this.gl.TEXTURE_2D);
+		this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+		this.Render();
     }
 
     render() {
@@ -158,7 +164,14 @@ class GlApp {
             
             //
             // TODO: properly select shader here
+            if (this.scene.models[i].shader === "color") {
+                console.log("Hello");
+                
+
+            }
             //
+
+
             let selected_shader = 'emissive';
             this.gl.useProgram(this.shader[selected_shader].program);
 
