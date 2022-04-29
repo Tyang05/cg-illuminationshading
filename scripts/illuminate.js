@@ -163,11 +163,6 @@ class GlApp {
             
             //
             // TODO: properly select shader here
-            if (this.scene.models[i].shader === "color") {
-                console.log("Hello");
-                
-
-            }
             //
             let selected_shader = scene.models[i].shader === 'color' ? this.algorithm + "_color" : this.algorithm + "_texture";
             this.gl.useProgram(this.shader[selected_shader].program);
