@@ -20,4 +20,15 @@ out vec3 specular;
 
 void main() {
     gl_Position = projection_matrix * view_matrix * model_matrix * vec4(vertex_position, 1.0);
+
+    ambient = max(light_ambient, 0.0);
+
+    vec3 pos = vec3(model_matrix * vec4(vertex_position, 1));
+    vec3 light_vector = normalize(light_position - pos);
+    vec3 normalized = normalize(vertex_normal);
+    diffuse = max(light_color * max(dot(normalized, light_vector), 0.0), 0.0);
+    
+    vec3 view_vector = normalize(camera_position - pos);
+    vec3 reflection_vector = normalize(reflect(-light_vector, normalized));
+    specular = max(light_color * pow(max(dot(reflection_vector, view_vector), 0.0), material_shininess), 0.0);
 }

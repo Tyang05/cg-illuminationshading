@@ -147,7 +147,6 @@ class GlApp {
         // TODO: update image for specified texture
         //
     }
-
     render() {
         // delete previous frame (reset both framebuffer and z-buffer)
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
@@ -159,9 +158,8 @@ class GlApp {
             //
             // TODO: properly select shader here
             //
-            let selected_shader = 'emissive';
+            let selected_shader = scene.models[i].shader === 'color' ? this.algorithm + "_color" : this.algorithm + "_texture";
             this.gl.useProgram(this.shader[selected_shader].program);
-
             // transform model to proper position, size, and orientation
             glMatrix.mat4.identity(this.model_matrix);
             glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.models[i].center);
@@ -178,6 +176,18 @@ class GlApp {
             //
             // TODO: bind proper texture and set uniform (if shader is a textured one)
             //
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.camera_position, this.scene.camera.position);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
+            this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
+
+            //Bind lights
+            this.scene.light.point_lights.map(each => {
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, each.position);
+                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, each.color);
+            })
+
+            //Texture goes here?
 
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
             this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
