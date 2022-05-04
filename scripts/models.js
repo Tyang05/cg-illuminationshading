@@ -396,6 +396,7 @@ function createSphereVertexArray(gl, position_attrib, normal_attrib, texcoord_at
 // Notes: Maybe do a 3D triangle or a shape with multiple faces
 //
 function createCustomVertexArray(gl, position_attrib, normal_attrib, texcoord_attrib) {
+    console.log("Hello");
     // create a new Vertex Array Object
     let vertex_array = gl.createVertexArray();
     // set newly created Vertex Array Object as the active one we are modifying
@@ -409,41 +410,26 @@ function createCustomVertexArray(gl, position_attrib, normal_attrib, texcoord_at
     // create array of 3D vertex values (each set of 3 values specifies a vertex: x, y, z)
     let vertices = [
         // Front face
-        -0.5, -0.5,  0.5,
-         0.5, -0.5,  0.5,
-         0.5,  0.5,  0.5,
-        -0.5,  0.5,  0.5,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0,
+        1.0, 0.0, 1.0,
 
-        // Back face
-         0.5, -0.5, -0.5,
-        -0.5, -0.5, -0.5,
-        -0.5,  0.5, -0.5,
-         0.5,  0.5, -0.5,
+        // Right Face
+        0.0, 1.0, 0.0, 
+        1.0, 0.0, 1.0,
+        1.0, 0.0, 0.0,
 
-        // Top face
-        -0.5,  0.5,  0.5,
-         0.5,  0.5,  0.5,
-         0.5,  0.5, -0.5,
-        -0.5,  0.5, -0.5,
+        // Back Face
+        0.0, 1.0, 0.0,
+        1.0, 0.0, 1.0,
+        1.0, 0.0, 0.0,
 
-        // Bottom face
-         0.5, -0.5,  0.5,
-        -0.5, -0.5,  0.5,
-        -0.5, -0.5, -0.5,
-         0.5, -0.5, -0.5,
-
-        // Right face
-         0.5, -0.5,  0.5,
-         0.5, -0.5, -0.5,
-         0.5,  0.5, -0.5,
-         0.5,  0.5,  0.5,
-
-        // Left face
-        -0.5, -0.5, -0.5,
-        -0.5, -0.5,  0.5,
-        -0.5,  0.5,  0.5,
-        -0.5,  0.5, -0.5
+        // Left Face
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 1.0
     ];
+
     // store array of vertex positions in the vertex_position_buffer
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     // enable position_attrib in our GPU program
@@ -463,37 +449,19 @@ function createCustomVertexArray(gl, position_attrib, normal_attrib, texcoord_at
         0.0,  0.0,  1.0,
         0.0,  0.0,  1.0,
         0.0,  0.0,  1.0,
-        0.0,  0.0,  1.0,
 
-        // Back
-        0.0,  0.0, -1.0,
-        0.0,  0.0, -1.0,
-        0.0,  0.0, -1.0,
-        0.0,  0.0, -1.0,
-
-        // Top
-        0.0,  1.0,  0.0,
-        0.0,  1.0,  0.0,
-        0.0,  1.0,  0.0,
-        0.0,  1.0,  0.0,
-
-        // Bottom
-        0.0, -1.0,  0.0,
-        0.0, -1.0,  0.0,
-        0.0, -1.0,  0.0,
-        0.0, -1.0,  0.0,
 
         // Right
-        1.0,  0.0,  0.0,
-        1.0,  0.0,  0.0,
-        1.0,  0.0,  0.0,
-        1.0,  0.0,  0.0,
+        0.0,  0.0, -1.0,
+        0.0,  0.0, -1.0,
+        0.0,  0.0, -1.0,
+
+        // Back
+
 
         // Left
-        -1.0,  0.0,  0.0,
-        -1.0,  0.0,  0.0,
-        -1.0,  0.0,  0.0,
-        -1.0,  0.0,  0.0
+
+        
     ];
     // store array of vertex normals in the vertex_normal_buffer
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
@@ -561,12 +529,16 @@ function createCustomVertexArray(gl, position_attrib, normal_attrib, texcoord_at
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertex_index_buffer);
     // create array of vertex indices (each set of 3 represents a triangle)
     let indices = [
-         0,  1,  2,      0,  2,  3,   // Front
-         4,  5,  6,      4,  6,  7,   // Back
-         8,  9, 10,      8, 10, 11,   // Top
-        12, 13, 14,     12, 14, 15,   // Bottom
-        16, 17, 18,     16, 18, 19,   // Right
-        20, 21, 22,     20, 22, 23    // Left
+         0,  1,  2,     1,  2,  0,    2, 3, 0,      3, 4, 0,       4, 5, 0,       5, 6, 0,       6, 7, 0,       7, 0, 2,      // Front
+         8, 9, 10,       9, 10, 8,     10, 11, 8,     11, 12, 8,     12, 13, 8,     13, 14, 8,     14, 15, 8,     15, 8, 10,    //Back
+         16, 17, 18,     17, 18, 19,  // First
+         20, 21, 22,     21, 22, 23,  // Second
+         24, 25, 26,     25, 26, 27,  // Third
+         28, 29, 30,     29, 30, 31,  // Fourth
+         32, 33, 34,     33, 34, 35,  // Fifth
+         36, 37, 38,     37, 38, 39,  // Sixth
+         40, 41, 42,     41, 42, 43,  // Seventh
+         44, 45, 46,     45, 46, 47   //Eighth
     ];
     // store array of vertex indices in the vertex_index_buffer
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
