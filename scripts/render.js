@@ -27,7 +27,7 @@ function init() {
                         rotate_z: 0
                     },
                     {
-                        type: 'custom',
+                        type: 'sphere',
                         shader: 'color',
                         material: {
                             color: vec3.fromValues(0.1, 0.4, 0.9),  // red, green, blue
