@@ -47,7 +47,11 @@ function init() {
                         {
                             position: vec3.fromValues(1.5, 3.0, -4.5),  // x, y, z
                             color: vec3.fromValues(1.0, 1.0, 0.8)  // red, green, blue
-                        }
+                        },
+                        {
+                            position: vec3.fromValues(-1.5, 2.0, -3.5),  // x, y, z
+                            color: vec3.fromValues(1.0, 1.0, 0.0)  // red, green, blue
+                        },
                     ]
                 }
             }
