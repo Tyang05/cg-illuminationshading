@@ -24,7 +24,12 @@ function init() {
                         size: vec3.fromValues(8.0, 1.0, 8.0),  // width, 1.0, depth
                         rotate_x: 0,
                         rotate_y: 0,
-                        rotate_z: 0
+                        rotate_z: 0,
+                        texture: {
+                            url: "images/Checkered.jpg",
+                            scale: vec2.fromValues(1.0, 1,0),
+                            id: null,
+                        }
                     },
                     {
                         type: 'cube',
@@ -38,7 +43,12 @@ function init() {
                         size: vec3.fromValues(2.0, 2.0, 2.0),  // width, height, depth
                         rotate_x: 0,
                         rotate_y: 0,
-                        rotate_z: 0
+                        rotate_z: 0,
+                        texture: {
+                            url: "images/Checkered.jpg",
+                            scale: vec2.fromValues(1.0,1,0),
+                            id: null,
+                        }
                     }
                 ],
                 light: {
@@ -47,7 +57,11 @@ function init() {
                         {
                             position: vec3.fromValues(1.5, 3.0, -4.5),  // x, y, z
                             color: vec3.fromValues(1.0, 1.0, 0.8)  // red, green, blue
-                        }
+                        },
+                        {
+                            position: vec3.fromValues(-1.5, 2.0, -3.5),  // x, y, z
+                            color: vec3.fromValues(1.0, 1.0, 0.0)  // red, green, blue
+                        },
                     ]
                 }
             }
