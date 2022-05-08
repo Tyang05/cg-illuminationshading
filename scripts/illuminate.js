@@ -130,8 +130,11 @@ class GlApp {
         let white = [255,255,255,255];
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture); //bind
 		this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR); //do the tex parameters
-		this.gl.texImage2D(this.gl.TEXTURE_2D, 0,this.gl.RGBA, 1, 1, 0,this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(white));
-		this.gl.bindTexture(this.gl.TEXTURE_2D, null); //unbind
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.REPEAT);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.REPEAT);
+
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0,this.gl.RGBA, 1, 1, 0,this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(white));
 
         // download the actual image
         let image = new Image();
@@ -148,10 +151,8 @@ class GlApp {
     updateTexture(texture, image_element) {
         // TODO (DONE): update image for specified texture.
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-		this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA,this.gl.UNSIGNED_BYTE, image_element);
-		this.gl.generateMipmap(this.gl.TEXTURE_2D);
+		this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);
 		this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-		this.Render();
     }
     render() {
         // delete previous frame (reset both framebuffer and z-buffer)
@@ -160,7 +161,6 @@ class GlApp {
         // draw all models
         for (let i = 0; i < this.scene.models.length; i ++) {
             if (this.vertex_array[this.scene.models[i].type] == null) continue;
-            
             //
             // TODO: properly select shader here
             //
@@ -178,7 +178,7 @@ class GlApp {
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.projection_matrix, false, this.projection_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.view_matrix, false, this.view_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
-            
+
             //
             // TODO: bind proper texture and set uniform (if shader is a textured one)
             //
@@ -186,6 +186,32 @@ class GlApp {
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
             this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
+
+            if (this.scene.models[i].shader == "color") {
+                this.gl.uniform2fv(this.shader[selected_shader].uniforms.texture_scale, this.scene.models[i].texture.scale);
+
+                let texture_uniform = this.gl.getUniformLocation(this.shader[selected_shader].program, "image");
+
+                if (this.scene.models[i].type == "plane") {
+                    this.gl.activeTexture(this.gl.TEXTURE0);
+                    this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
+                    this.gl.uniform1i(texture_uniform, 0);
+                } else if (this.scene.models[i].type == "sphere") {
+                    //console.log("Hello");
+                    this.gl.activeTexture(this.gl.TEXTURE1);
+                    this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
+                    this.gl.uniform1i(texture_uniform, 1);
+                } else if (this.scene.models[i].type == "cube") {
+                    //console.log("hello");
+                    this.gl.activeTexture(this.gl.TEXTURE2);
+                    this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
+                    this.gl.uniform1i(texture_uniform, 2);
+                } else if (this.scene.models[i].type == "custom") {
+                    this.gl.activeTexture(this.gl.TEXTURE3);
+                    this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
+                    this.gl.uniform1i(texture_uniform, 3);
+                }
+            }
 
             //Bind lights
             this.scene.light.point_lights.map((each, i) => {
