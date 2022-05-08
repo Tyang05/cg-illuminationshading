@@ -61,7 +61,7 @@ class GlApp {
         this.shader.gouraud_color = this.createShaderProgram(shaders[0], shaders[1]);
         this.shader.gouraud_texture = this.createShaderProgram(shaders[2], shaders[3]);
         this.shader.phong_color = this.createShaderProgram(shaders[4], shaders[5]);
-        this.shader.phone_texture = this.createShaderProgram(shaders[6], shaders[7]);
+        this.shader.phong_texture = this.createShaderProgram(shaders[6], shaders[7]);
         this.shader.emissive = this.createShaderProgram(shaders[8], shaders[9]);
 
         this.initializeGlApp();
@@ -182,9 +182,9 @@ class GlApp {
             this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
 
             //Bind lights
-            this.scene.light.point_lights.map(each => {
-                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, each.position);
-                this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, each.color);
+            this.scene.light.point_lights.map((each, i) => {
+                this.gl.uniform3fv(this.gl.getUniformLocation(this.shader[selected_shader].program, "light_position["+i+"]"), each.position);
+            	this.gl.uniform3fv(this.gl.getUniformLocation(this.shader[selected_shader].program, "light_color["+i+"]"), each.color);
             })
 
             //Texture goes here?
