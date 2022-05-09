@@ -135,6 +135,7 @@ class GlApp {
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.REPEAT);
 
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0,this.gl.RGBA, 1, 1, 0,this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(white));
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
 
         // download the actual image
         let image = new Image();
@@ -153,6 +154,7 @@ class GlApp {
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
 		this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);
 		this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+        this.render();
     }
     render() {
         // delete previous frame (reset both framebuffer and z-buffer)
@@ -187,7 +189,7 @@ class GlApp {
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
             this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
 
-            if (this.scene.models[i].shader == "color") {
+            if (this.scene.models[i].shader == "texture") {
                 this.gl.uniform2fv(this.shader[selected_shader].uniforms.texture_scale, this.scene.models[i].texture.scale);
 
                 let texture_uniform = this.gl.getUniformLocation(this.shader[selected_shader].program, "image");
@@ -197,12 +199,10 @@ class GlApp {
                     this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
                     this.gl.uniform1i(texture_uniform, 0);
                 } else if (this.scene.models[i].type == "sphere") {
-                    //console.log("Hello");
                     this.gl.activeTexture(this.gl.TEXTURE1);
                     this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
                     this.gl.uniform1i(texture_uniform, 1);
                 } else if (this.scene.models[i].type == "cube") {
-                    //console.log("hello");
                     this.gl.activeTexture(this.gl.TEXTURE2);
                     this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
                     this.gl.uniform1i(texture_uniform, 2);
@@ -213,17 +213,15 @@ class GlApp {
                 }
             }
 
+            this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
+            this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
+            this.gl.bindVertexArray(null);
+
             //Bind lights
             this.scene.light.point_lights.map((each, i) => {
                 this.gl.uniform3fv(this.gl.getUniformLocation(this.shader[selected_shader].program, "light_position["+i+"]"), each.position);
             	this.gl.uniform3fv(this.gl.getUniformLocation(this.shader[selected_shader].program, "light_color["+i+"]"), each.color);
             })
-
-            //Texture goes here?
-
-            this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
-            this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
-            this.gl.bindVertexArray(null);
         }
 
         // draw all light sources
